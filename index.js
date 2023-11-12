@@ -42,7 +42,7 @@ async function run() {
     // mybokkings api
     app.post('/mybookings', async(req, res)=>{
       const mybookingRoom = req.body
-      console.log(mybookingRoom)
+      // console.log(mybookingRoom)
       const result = await bookCollection.insertOne(mybookingRoom)
       res.send(result)
     })
@@ -57,6 +57,30 @@ async function run() {
       const id = req.params.id;
       const cursor = {_id: new ObjectId(id)}
       const result = await bookCollection.findOne(cursor)
+      res.send(result)
+    })
+
+    app.delete('/mybookings/:id', async(req,res)=>{
+      const id = req.params.id;
+      const quary = {_id: new ObjectId(id)}
+      const result = await bookCollection.deleteOne(quary)
+      res.send(result)
+    })
+
+    app.patch('/mybookings/:id', async(req,res)=>{
+      const id = req.params.id;
+      const quary = {_id: new ObjectId(id)}
+      const options = {upsert: true}
+      const updateInfo = req.body;
+      console.log(updateInfo, id, quary)
+      const info ={
+        $set: {
+          checkin: updateInfo.checkin,
+          checkout: updateInfo.checkout
+        }
+      }
+      const result = await bookCollection.updateOne(quary,info,options)
+      // console.log(info, result)
       res.send(result)
     })
 
