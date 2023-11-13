@@ -25,6 +25,7 @@ async function run() {
 
     const roomRoverCollection = client.db('roomroverDB').collection('rooms')
     const bookCollection = client.db('roomroverDB').collection('mybooking')
+    const reviewCollection = client.db('roomroverDB').collection('review')
 
     app.get('/rooms', async(req,res)=>{
       const cursor = roomRoverCollection.find()
@@ -72,7 +73,6 @@ async function run() {
       const quary = {_id: new ObjectId(id)}
       const options = {upsert: true}
       const updateInfo = req.body;
-      console.log(updateInfo, id, quary)
       const info ={
         $set: {
           checkin: updateInfo.checkin,
@@ -80,7 +80,13 @@ async function run() {
         }
       }
       const result = await bookCollection.updateOne(quary,info,options)
-      // console.log(info, result)
+      res.send(result)
+    })
+
+    // review api
+    app.post("/reviews", async(req,res)=>{
+      const review = req.body
+      const result = await reviewCollection.insertOne(review)
       res.send(result)
     })
 
